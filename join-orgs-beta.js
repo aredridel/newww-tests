@@ -10,15 +10,20 @@ require('./lib/sharedNemo').then(function(nemo) {
 
   tap.test('join beta', {
     bail: true
-  }, function(t) {
-    return P.all([
-      nemo.driver.get(urlOf('/orgs?join-beta')),
-      nemo.view.login.nameWaitVisible(),
-      nemo.view.login.name().sendKeys(nemo.state.username),
-      nemo.view.login.password().sendKeys('test123'),
-      nemo.view.login.loginButton().click(),
-      nemo.view.nav.usernameWaitVisible(),
-      nemo.view.org.bannerInfoTextEquals('Organizations are here!')
-    ]).then(t.ok).catch(t.error).then(t.end);
+  }, async function(t) {
+      try {
+        await nemo.driver.get(urlOf('/orgs?join-beta'));
+        await nemo.view.login.nameWaitVisible();
+        await nemo.view.login.name().sendKeys(nemo.state.username);
+        await nemo.view.login.password().sendKeys('test123');
+        await nemo.view.login.loginButton().click();
+        await nemo.view.nav.usernameWaitVisible();
+        await nemo.view.org.bannerInfoTextEquals('Organizations are here!')
+        t.ok();
+      } catch (e) {
+        t.error(e);
+      }
+
+      t.end();
   });
 });
